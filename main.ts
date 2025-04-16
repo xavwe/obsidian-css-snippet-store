@@ -1,7 +1,5 @@
 import {Plugin, Notice, Modal, App} from "obsidian";
 
-
-
 interface Snippet {
 	id: string;
 	name: string;
@@ -37,7 +35,6 @@ export default class CssSnippetStore extends Plugin {
 			console.error(error);
 			new Notice(`Error: ${error.message}`);
 		}
-
 	}
 
 	injectWhenSettingsLoaded() {
@@ -107,13 +104,12 @@ export default class CssSnippetStore extends Plugin {
 class CssSnippetStoreModal extends Modal {
 	constructor(app: App, private snippets: Snippet[]) {
 		super(app);
-//		this.modalEl.addClass('mod-css-snippet-store'); // Custom class for styling
+		//		this.modalEl.addClass('mod-css-snippet-store'); // Custom class for styling
 	}
 
 	async install(name: string, code: string) {
 		const vault = this.app.vault;
 		const adapter = vault.adapter;
-
 		const snippetFolderPath = '.obsidian/snippets';
 		const fileName = name + '.css';
 		const fullPath = `${snippetFolderPath}/${fileName}`;
@@ -141,12 +137,7 @@ class CssSnippetStoreModal extends Modal {
 	}
 
 	onOpen() {
-
 		const { contentEl } = this;
-
-
-
-
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 		const grid = contentEl.createEl('div', { cls: 'snippet-store-grid'});
 
@@ -177,10 +168,7 @@ class CssSnippetStoreModal extends Modal {
 					console.error(error);
 					new Notice(`Error: ${error.message}`);
 				}
-
-
 			});
-
 
 			if (snippet.source) {
 				const sourceBtn = buttonWrapper.createEl('a', {
