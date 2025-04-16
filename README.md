@@ -5,8 +5,8 @@
 
 ## Roadmap
 
-- [ ] Install Snippet
-- [ ] Uninstall Snippet
+- [x] Install Snippet
+- [x] Uninstall Snippet
 - [ ] Style Store
 - [ ] Search
 
