@@ -1,6 +1,6 @@
 import {Plugin, Notice, Modal, App} from "obsidian";
 
-let snippets: Snippet[] = [];
+
 
 interface Snippet {
 	id: string;
@@ -13,6 +13,9 @@ interface Snippet {
 }
 
 export default class CssSnippetStore extends Plugin {
+
+	private snippets: Snippet[] = [];
+
 	observer: MutationObserver;
 
 	onload() {
@@ -27,7 +30,7 @@ export default class CssSnippetStore extends Plugin {
 				fetch(url)
 					.then(r => r.json())
 					.then(t => {
-						snippets = t;
+						this.snippets = t;
 					})
 			} else {
 				new Notice(`No Internet connection...`);
@@ -59,7 +62,7 @@ export default class CssSnippetStore extends Plugin {
 						customButton.style.marginLeft = "8px";
 
 						customButton.onclick = () => {
-							new CssSnippetStoreModal(this.app).open();
+							new CssSnippetStoreModal(this.app, this.snippets).open();
 						};
 
 						controlElement.appendChild(customButton);
@@ -105,7 +108,7 @@ export default class CssSnippetStore extends Plugin {
 }
 
 class CssSnippetStoreModal extends Modal {
-	constructor(app: App) {
+	constructor(app: App, private snippets: Snippet[]) {
 		super(app);
 //		this.modalEl.addClass('mod-css-snippet-store'); // Custom class for styling
 	}
@@ -150,7 +153,7 @@ class CssSnippetStoreModal extends Modal {
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 		const grid = contentEl.createEl('div', { cls: 'snippet-store-grid'});
 
-        snippets.forEach(snippet => {
+        this.snippets.forEach(snippet => {
 			const card = grid.createDiv({ cls: 'community-item' });
 
 			card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
