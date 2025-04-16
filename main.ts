@@ -18,7 +18,7 @@ export default class CssSnippetStore extends Plugin {
 
 	observer: MutationObserver;
 
-	onload() {
+	async onload() {
 		// Start the mutation observer when the plugin is loaded.
 		this.injectWhenSettingsLoaded();
 
@@ -27,11 +27,8 @@ export default class CssSnippetStore extends Plugin {
 		const url = "https://raw.githubusercontent.com/xavwe/obsidian-css-snippet-store/refs/heads/main/snippets.json"
 		try {
 			if (navigator.onLine) {
-				fetch(url)
-					.then(r => r.json())
-					.then(t => {
-						this.snippets = t;
-					})
+				const response = await fetch(url);
+				const data = await response.json();
 			} else {
 				new Notice(`No Internet connection...`);
 				return;
@@ -165,17 +162,14 @@ class CssSnippetStoreModal extends Modal {
 			const button = buttonWrapper.createEl('button', { text: 'Install', cls: 'mod-cta' });
 
 			// Attach event listener
-			button.addEventListener('click', () => {
+			button.addEventListener('click', async () => {
 				let code;
 				const url = "https://raw.githubusercontent.com/" + snippet.repo + "/refs/heads/main/" + snippet.folder + "/snippet.css"
 				try {
 					if (navigator.onLine) {
-						fetch(url)
-							.then( r => r.text() )
-							.then( t => {
-								code = t;
-								this.install(snippet.id , code);
-							})
+						const response = await fetch(url);
+						const code = await response.text();
+						await this.install(snippet.id, code);
 					} else {
 						new Notice(`No Internet connection...`);
 						return;
