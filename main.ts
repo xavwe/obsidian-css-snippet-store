@@ -21,7 +21,7 @@ export default class CssSnippetStore extends Plugin {
 
 
 		// fetching list of snippets
-		const url = "https://raw.githubusercontent.com/xavwe/test/refs/heads/main/snippets.json"
+		const url = "https://raw.githubusercontent.com/xavwe/obsidian-css-snippet-store/refs/heads/main/snippets.json"
 		try {
 			if (navigator.onLine) {
 				fetch(url)
