@@ -136,47 +136,89 @@ class CssSnippetStoreModal extends Modal {
 		}
 	}
 
+	async uninstall(name: string) {
+		const vault = this.app.vault;
+		const snippetFolderPath = '.obsidian/snippets';
+		const fileName = name + '.css';
+		const fullPath = `${snippetFolderPath}/${fileName}`;
+
+		try {
+			// Check if the file exists
+			if (await vault.adapter.exists(fullPath)) {
+				await vault.adapter.remove(fullPath);
+				new Notice(`Snippet "${fileName}" deleted.`);
+			} else {
+				new Notice(`Snippet "${fileName}" does not exist.`);
+			}
+		} catch (err) {
+			console.error('Failed to delete snippet:', err);
+			new Notice('Failed to delete snippet. See console for details.');
+		}
+	}
+
+	async checkSnippetExists(name: string): Promise<boolean> {
+		const vault = this.app.vault;
+		const snippetFolderPath = '.obsidian/snippets';
+		const fileName = name + '.css';
+		const fullPath = `${snippetFolderPath}/${fileName}`;
+		return await vault.adapter.exists(fullPath);
+	}
+
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 		const grid = contentEl.createEl('div', { cls: 'snippet-store-grid'});
 
-        this.snippets.forEach(snippet => {
+		this.snippets.forEach(snippet => {
 			const card = grid.createDiv({ cls: 'community-item' });
 
 			card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
 			card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
 			card.createEl('div', { text: snippet.description, cls: 'community-desc' });
 
-			const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper'});
+			const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
 
-			const button = buttonWrapper.createEl('button', { text: 'Install', cls: 'mod-cta' });
+			const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
 
-			// Attach event listener
-			button.addEventListener('click', async () => {
-				const url = "https://raw.githubusercontent.com/" + snippet.repo + "/refs/heads/main/" + snippet.folder + "/snippet.css"
-				try {
-					if (navigator.onLine) {
-						const response = await fetch(url);
-						const code = await response.text();
-						await this.install(snippet.id, code);
-					} else {
-						new Notice(`No Internet connection...`);
-						return;
-					}
-				} catch (error) {
-					console.error(error);
-					new Notice(`Error: ${error.message}`);
+			// Check if snippet already exists before updating the button text
+			this.checkSnippetExists(snippet.id).then((exists) => {
+				if (exists) {
+					button.textContent = 'Delete';
+					button.className = 'mod-danger';  // Optionally change the class to indicate danger
+
+					// Delete snippet logic
+					button.addEventListener('click', async () => {
+						await this.uninstall(snippet.id);
+						// Optionally, reload the modal to update the button text after deletion
+						this.close();
+						this.open();
+					});
+				} else {
+					button.textContent = 'Install';
+					button.className = 'mod-cta';
+
+					// Install snippet logic
+					button.addEventListener('click', async () => {
+						const url = "https://raw.githubusercontent.com/" + snippet.repo + "/refs/heads/main/" + snippet.folder + "/snippet.css"
+						try {
+							if (navigator.onLine) {
+								const response = await fetch(url);
+								const code = await response.text();
+								await this.install(snippet.id, code);
+								// Optionally, reload the modal to update the button text after installation
+								this.close();
+								this.open();
+							} else {
+								new Notice(`No Internet connection...`);
+								return;
+							}
+						} catch (error) {
+							console.error(error);
+							new Notice(`Error: ${error.message}`);
+						}
+					});
 				}
 			});
-
-			if (snippet.source) {
-				const sourceBtn = buttonWrapper.createEl('a', {
-					href: snippet.source,
-					cls: 'snippet-link'
-				});
-				sourceBtn.createEl('button', { text: 'Source', cls: '' });
-			}
 		});
 	}
 
