@@ -1,0 +1,18 @@
+[
+	{
+		"id": "hide-properties-in-reading-mode",
+		"name": "Hide properties in reading mode",
+		"author": "Xaver Wenhart",
+		"description": "This snippet hides the properties in the reading mode.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "cornell"
+	},
+	{
+		"id": "cornell-note",
+		"name": "Cornell Note",
+		"author": "nopshar",
+		"description": "Lorem ipsum est verbum.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "hide-properties-reading-mode"
+	}
+]

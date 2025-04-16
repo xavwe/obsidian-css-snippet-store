@@ -1,0 +1,10 @@
+{
+	"id": "css-snippet-store",
+	"name": "CSS Snippet Store",
+	"version": "0.0.1",
+	"minAppVersion": "0.15.0",
+	"description": "Install css snippets easily.",
+	"author": "Xaver Wenhart",
+	"authorUrl": "https://www.xaver-wenhart.me",
+	"isDesktopOnly": false
+}
