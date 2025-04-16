@@ -28,7 +28,7 @@ export default class CssSnippetStore extends Plugin {
 		try {
 			if (navigator.onLine) {
 				const response = await fetch(url);
-				const data = await response.json();
+				this.snippets = await response.json();
 			} else {
 				new Notice(`No Internet connection...`);
 				return;
