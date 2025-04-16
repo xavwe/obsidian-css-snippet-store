@@ -38,7 +38,7 @@ export default class CssSnippetStore extends Plugin {
 	}
 
 	injectWhenSettingsLoaded() {
-		this.observer = new MutationObserver((mutations) => {
+		this.observer = new MutationObserver(() => {
 			const settingItems = Array.from(document.querySelectorAll('.setting-item'));
 
 			for (const item of settingItems) {
