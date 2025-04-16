@@ -71,8 +71,8 @@ export default class CssSnippetStore extends Plugin {
 						updateButtonLabel(customButton);
 
 						// Update on connectivity change
-						window.addEventListener('online', updateButtonLabel(customButton));
-						window.addEventListener('offline', updateButtonLabel(customButton));
+						window.addEventListener('online', () => updateButtonLabel(customButton));
+						window.addEventListener('offline', () => updateButtonLabel(customButton));
 					}
 				}
 			}
