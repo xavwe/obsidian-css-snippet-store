@@ -1,5 +1,6 @@
 # Obsidian Sample Plugin
-
+> [!WARNING]
+> This Plugin is currently under development!
 ## Roadmap
 
 - [ ] Install Snippet
