@@ -104,7 +104,7 @@ export default class CssSnippetStore extends Plugin {
 class CssSnippetStoreModal extends Modal {
 	constructor(app: App, private snippets: Snippet[]) {
 		super(app);
-		//		this.modalEl.addClass('mod-css-snippet-store'); // Custom class for styling
+		this.modalEl.addClass('mod-snippet-store');
 	}
 
 	async install(name: string, code: string) {
