@@ -1,4 +1,4 @@
-# Obsidian Sample Plugin
+# Obsidian CSS Snippet Store
 > [!WARNING]
 > This Plugin is currently under development!
 ## Roadmap
