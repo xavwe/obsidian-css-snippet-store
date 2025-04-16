@@ -163,7 +163,6 @@ class CssSnippetStoreModal extends Modal {
 
 			// Attach event listener
 			button.addEventListener('click', async () => {
-				let code;
 				const url = "https://raw.githubusercontent.com/" + snippet.repo + "/refs/heads/main/" + snippet.folder + "/snippet.css"
 				try {
 					if (navigator.onLine) {
