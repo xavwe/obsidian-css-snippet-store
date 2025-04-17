@@ -273,7 +273,7 @@ class CssSnippetStoreModal extends Modal {
 		messageEl.style.fontStyle = 'italic';
 
 		// Snippet container
-		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
+		contentEl.createEl('div', { cls: 'community-items-container' });
 
 		// Initial rendering
 		this.renderSnippetsUI();
