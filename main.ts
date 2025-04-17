@@ -19,7 +19,6 @@ export default class CssSnippetStore extends Plugin {
 		// Start the mutation observer when the plugin is loaded.
 		this.injectBrowseButton();
 
-
 		// fetching list of snippets
 		const url = "https://raw.githubusercontent.com/xavwe/obsidian-css-snippet-store/main/snippets.json"
 		try {
@@ -30,9 +29,9 @@ export default class CssSnippetStore extends Plugin {
 					return;
 				}
 				/*
-				if (!response.headers.get('content-type')?.includes('application/json')) {
-					throw new Error("Unexpected content type");
-				}*/
+                if (!response.headers.get('content-type')?.includes('application/json')) {
+                    throw new Error("Unexpected content type");
+                }*/
 				this.snippets = await response.json();
 			} else {
 				new Notice(`No Internet connection...`);
@@ -80,8 +79,6 @@ export default class CssSnippetStore extends Plugin {
 			subtree: true,
 		});
 	}
-
-
 
 	onunload() {
 		// Clean up the mutation observer on plugin unload.
@@ -244,23 +241,30 @@ class CssSnippetStoreModal extends Modal {
 				// Prevent click events on buttons inside the card from triggering README modal
 				if ((event.target as HTMLElement).tagName.toLowerCase() === 'button') return;
 
+				// Create and open modal first with loading indicator
+				const readmeModal = new SnippetReadmeModal(this.app, snippet, "", this.plugin);
+				readmeModal.open();
+
 				const readmeUrl = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/README.md`;
 				try {
 					if (await isOnline()) {
 						const response = await fetchWithTimeout(readmeUrl);
 						if (!response.ok) {
 							new Notice(`Could not fetch README: ${response.statusText}`);
+							readmeModal.close();
 							return;
 						}
 						const readme = await response.text();
-						// Pass the plugin instance (this.plugin)
-						new SnippetReadmeModal(this.app, snippet, readme, this.plugin).open();
+						// Update the modal with content
+						readmeModal.updateReadmeContent(readme);
 					} else {
 						new Notice("No Internet connection...");
+						readmeModal.close();
 					}
 				} catch (error) {
 					console.error(error);
 					new Notice(`Error fetching README: ${error.message}`);
+					readmeModal.close();
 				}
 			});
 
@@ -268,7 +272,6 @@ class CssSnippetStoreModal extends Modal {
 			this.updateSnippetCard(snippet);
 		});
 	}
-
 
 	onOpen() {
 		const { contentEl } = this;
@@ -313,7 +316,6 @@ class CssSnippetStoreModal extends Modal {
 		});
 	}
 
-
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
@@ -326,7 +328,6 @@ function fetchWithTimeout(resource: RequestInfo, options: RequestInit = {}, time
 		new Promise<Response>((_, reject) => setTimeout(() => reject(new Error("Request timed out")), timeout))
 	]);
 }
-
 
 export async function isOnline(timeout = 3000): Promise<boolean> {
 	try {
@@ -351,9 +352,14 @@ class SnippetReadmeModal extends Modal {
 		app: App,
 		private snippet: Snippet,
 		private readmeContent: string,
-		private plugin: Plugin // Add reference to the plugin instance
+		private plugin: Plugin
 	) {
 		super(app);
+	}
+
+	updateReadmeContent(content: string) {
+		this.readmeContent = content;
+		this.renderContent();
 	}
 
 	async onOpen() {
@@ -363,28 +369,56 @@ class SnippetReadmeModal extends Modal {
 		this.modalEl.style.width = "80vw";
 		this.modalEl.style.height = "80vh";
 
-		// Rewrite relative image paths to absolute GitHub raw URLs
-		const adjustedContent = this.rewriteRelativeMediaPaths(this.readmeContent);
+		// Show loading indicator if no content yet
+		if (!this.readmeContent) {
+			contentEl.createEl('div', {
+				text: 'Loading README...',
+				cls: 'snippet-readme-loading'
+			});
+			return;
+		}
 
-		// Markdown container
-		const markdownContainer = contentEl.createDiv();
+		await this.renderContent();
+	}
 
-		// Render Markdown using Obsidian's renderer
-		// Use the plugin instance instead of "this"
-		await MarkdownRenderer.render(
-			this.app,
-			adjustedContent,
-			markdownContainer,
-			"",
-			this.plugin // Pass the plugin instance which is a Component
-		);
+	async renderContent() {
+		if (!this.readmeContent) return;
 
-		markdownContainer.querySelectorAll("img").forEach((img) => {
-			img.style.maxWidth = "100%";
-			img.style.height = "auto";
-			img.style.display = "block";
-			img.style.margin = "1rem auto"; // Optional: center images
-		});
+		const { contentEl } = this;
+		contentEl.empty();
+
+		try {
+			// Rewrite relative image paths to absolute GitHub raw URLs
+			const adjustedContent = this.rewriteRelativeMediaPaths(this.readmeContent);
+
+			// Markdown container
+			const markdownContainer = contentEl.createDiv();
+
+			// Render Markdown using Obsidian's renderer
+			await MarkdownRenderer.render(
+				this.app,
+				adjustedContent,
+				markdownContainer,
+				"",
+				this.plugin
+			);
+
+			// Optimize image loading
+			markdownContainer.querySelectorAll("img").forEach((img) => {
+				img.setAttribute("loading", "lazy");
+				img.style.maxWidth = "100%";
+				img.style.height = "auto";
+				img.style.display = "block";
+				img.style.margin = "1rem auto";
+			});
+		} catch (error) {
+			console.error("Error rendering README:", error);
+			contentEl.empty();
+			contentEl.createEl('div', {
+				text: `Error rendering README: ${error.message}`,
+				cls: 'snippet-readme-error'
+			});
+		}
 	}
 
 	onClose() {
