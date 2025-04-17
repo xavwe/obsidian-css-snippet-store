@@ -19,7 +19,7 @@
 		"id": "lined-note",
 		"name": "Lined Notes",
 		"author": "gsarig",
-		"description": "By adding the css class bg--lined to your notes, you can have lined notes.",
+		"description": "By adding the css class bg--lined to your notes, you have lined notes.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "lined-note"
 	},
@@ -27,7 +27,7 @@
 		"id": "plaid-note",
 		"name": "Plaid Note",
 		"author": "gsarig",
-		"description": "By adding the css class bg--grid to your notes, you can have plaid notes.",
+		"description": "By adding the css class bg--grid to your notes, you have plaid notes.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "snappier-animations"
 	},
