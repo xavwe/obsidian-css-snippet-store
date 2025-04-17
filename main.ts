@@ -1,4 +1,4 @@
-import {Plugin, Notice, Modal, App} from "obsidian";
+import {Plugin, Notice, Modal, App, MarkdownRenderer} from "obsidian";
 
 interface Snippet {
 	id: string;
@@ -240,6 +240,29 @@ class CssSnippetStoreModal extends Modal {
 
 			card.createDiv({ cls: 'snippet-store-button-wrapper' });
 
+			card.addEventListener('click', async (event) => {
+				// Prevent click events on buttons inside the card from triggering README modal
+				if ((event.target as HTMLElement).tagName.toLowerCase() === 'button') return;
+
+				const readmeUrl = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/README.md`;
+				try {
+					if (await isOnline()) {
+						const response = await fetchWithTimeout(readmeUrl);
+						if (!response.ok) {
+							new Notice(`Could not fetch README: ${response.statusText}`);
+							return;
+						}
+						const readme = await response.text();
+						new SnippetReadmeModal(this.app, snippet, readme).open();
+					} else {
+						new Notice("No Internet connection...");
+					}
+				} catch (error) {
+					console.error(error);
+					new Notice(`Error fetching README: ${error.message}`);
+				}
+			});
+
 			// Now update just the button based on snippet state
 			this.updateSnippetCard(snippet);
 		});
@@ -319,5 +342,68 @@ export async function isOnline(timeout = 3000): Promise<boolean> {
 		return true;
 	} catch (e) {
 		return false;
+	}
+}
+
+class SnippetReadmeModal extends Modal {
+	constructor(
+		app: App,
+		private snippet: Snippet,
+		private readmeContent: string
+	) {
+		super(app);
+	}
+
+	async onOpen() {
+		const { contentEl } = this;
+		contentEl.empty();
+		contentEl.addClass("snippet-readme-modal");
+		this.modalEl.style.width = "80vw";
+		this.modalEl.style.height = "80vh";
+
+		// Title
+		contentEl.createEl("h2", {
+			text: `${this.snippet.name} – README`,
+		});
+
+		// Rewrite relative image paths to absolute GitHub raw URLs
+		const adjustedContent = this.rewriteRelativeMediaPaths(this.readmeContent);
+
+		// Markdown container
+		const markdownContainer = contentEl.createDiv();
+		markdownContainer.style.overflowY = "auto";
+		markdownContainer.style.maxHeight = "65vh";
+		markdownContainer.style.padding = "1rem";
+		markdownContainer.style.backgroundColor = "var(--background-secondary)";
+		markdownContainer.style.borderRadius = "8px";
+
+		// Render Markdown using Obsidian's renderer
+		await MarkdownRenderer.renderMarkdown(
+			adjustedContent,
+			markdownContainer,
+			"",
+			this
+		);
+
+		markdownContainer.querySelectorAll("img").forEach((img) => {
+			img.style.maxWidth = "100%";
+			img.style.height = "auto";
+			img.style.display = "block";
+			img.style.margin = "1rem auto"; // Optional: center images
+		});
+	}
+
+	onClose() {
+		this.contentEl.empty();
+	}
+
+	private rewriteRelativeMediaPaths(content: string): string {
+		const base = `https://raw.githubusercontent.com/${this.snippet.repo}/refs/heads/main/${this.snippet.folder}/`;
+
+		// Regex to match image/video markdown with relative path
+		return content.replace(/!\[([^\]]*)\]\((\.\/[^)]+)\)/g, (match, alt, relPath) => {
+			const url = base + relPath.replace("./", "");
+			return `![${alt}](${url})`;
+		});
 	}
 }
