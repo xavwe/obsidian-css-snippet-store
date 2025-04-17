@@ -7,8 +7,8 @@
 
 - [x] Install Snippet
 - [x] Uninstall Snippet
-- [ ] Style Store
-- [ ] Search
+- [x] Style Store
+- [x] Search
 
 ## Known Bugs
 - [ ] No Internet + open Settings > Appearance => Obsidian freezes
