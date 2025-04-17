@@ -153,6 +153,51 @@ class CssSnippetStoreModal extends Modal {
 		return await vault.adapter.exists(fullPath);
 	}
 
+	private updateSnippetCard(snippet: Snippet) {
+		const card = this.contentEl.querySelector(`.community-item[data-snippet-id="${snippet.id}"]`) as HTMLDivElement;
+		if (!card) return;
+
+		const buttonWrapper = card.querySelector('.snippet-store-button-wrapper') as HTMLDivElement;
+		if (!buttonWrapper) return;
+
+		// Clear any existing button
+		buttonWrapper.empty();
+
+		const button = buttonWrapper.createEl('button');
+		button.classList.add('mod-cta'); // default, will be overridden
+
+		this.checkSnippetExists(snippet.id).then((exists) => {
+			if (exists) {
+				button.textContent = 'Delete';
+				button.className = 'mod-danger';
+				button.addEventListener('click', async () => {
+					await this.uninstall(snippet.id);
+					this.updateSnippetCard(snippet);
+				});
+			} else {
+				button.textContent = 'Install';
+				button.className = 'mod-cta';
+				button.addEventListener('click', async () => {
+					const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
+					try {
+						if (await isOnline()) {
+							const response = await fetchWithTimeout(url);
+							if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+							const code = await response.text();
+							await this.install(snippet.id, code);
+							this.updateSnippetCard(snippet);
+						} else {
+							new Notice(`No Internet connection...`);
+						}
+					} catch (error) {
+						console.error(error);
+						new Notice(`Error: ${error.message}`);
+					}
+				});
+			}
+		});
+	}
+
 	private renderSnippetsUI(filter: string = "") {
 		const { contentEl } = this;
 		const grid = contentEl.querySelector('.community-items-container') as HTMLDivElement;
@@ -183,44 +228,16 @@ class CssSnippetStoreModal extends Modal {
 
 		filteredSnippets.forEach(snippet => {
 			const card = grid.createDiv({ cls: 'community-item' });
+			card.setAttr("data-snippet-id", snippet.id);
 
 			card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
 			card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
 			card.createEl('div', { text: snippet.description, cls: 'community-desc' });
 
-			const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
-			const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
+			card.createDiv({ cls: 'snippet-store-button-wrapper' });
 
-			this.checkSnippetExists(snippet.id).then((exists) => {
-				if (exists) {
-					button.textContent = 'Delete';
-					button.className = 'mod-danger';
-					button.addEventListener('click', async () => {
-						await this.uninstall(snippet.id);
-						this.renderSnippetsUI(filter);
-					});
-				} else {
-					button.textContent = 'Install';
-					button.className = 'mod-cta';
-					button.addEventListener('click', async () => {
-						const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
-						try {
-							if (await isOnline()) {
-								const response = await fetchWithTimeout(url);
-								if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
-								const code = await response.text();
-								await this.install(snippet.id, code);
-								this.renderSnippetsUI(filter);
-							} else {
-								new Notice(`No Internet connection...`);
-							}
-						} catch (error) {
-							console.error(error);
-							new Notice(`Error: ${error.message}`);
-						}
-					});
-				}
-			});
+			// Now update just the button based on snippet state
+			this.updateSnippetCard(snippet);
 		});
 	}
 
