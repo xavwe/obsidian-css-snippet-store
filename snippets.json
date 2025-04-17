@@ -1,42 +1,66 @@
 [
 	{
-		"id": "hide-properties-in-reading-mode",
-		"name": "Hide properties in reading mode",
-		"author": "Xaver Wenhart",
-		"description": "This snippet hides the properties in the reading mode.",
+		"id": "cornell",
+		"name": "Cornell",
+		"author": "nopshar",
+		"description": "This snippet adds the famous Cornell Note taking system to your notes.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "cornell"
 	},
 	{
-		"id": "cornell-note",
-		"name": "Cornell Note",
-		"author": "nopshar",
-		"description": "TODOTODOTODOTODOTODOTODOTODOTODO",
+		"id": "hide-properties-reading-mode",
+		"name": "Hide Properties in Reading Mode",
+		"author": "Xaver Wenhart",
+		"description": "This snippet hides the properties in reading mode.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "hide-properties-reading-mode"
 	},
 	{
-		"id": "block-quote-inline",
-		"name": "Block Quote (Inline)",
-		"author": "Dmytro-Shulha",
-		"description": "TODOTODOTODOTODOTODOTODOTODOTODO",
+		"id": "lined-note",
+		"name": "Lined Notes",
+		"author": "gsarig",
+		"description": "By adding the css class bg--lined to your notes, you can have lined notes.",
 		"repo": "xavwe/obsidian-css-snippets",
-		"folder": "block-quote-inline"
+		"folder": "lined-note"
 	},
 	{
-		"id": "image-zoom",
-		"name": "Image Zoom",
-		"author": "unknown",
-		"description": "This snippet allows you to zoom in on images in your notes.",
+		"id": "plaid-note",
+		"name": "Plaid Note",
+		"author": "gsarig",
+		"description": "By adding the css class bg--grid to your notes, you can have plaid notes.",
 		"repo": "xavwe/obsidian-css-snippets",
-		"folder": "image-zoom"
+		"folder": "snappier-animations"
+	},
+	{
+		"id": "section-word-count-on-hover",
+		"name": "Section Word Count on Hover",
+		"author": "gsarig",
+		"description": "This snippet shows the Better Word Count Plugin Section Word Counter only on hover.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "section-word-count-on-hover"
 	},
 	{
 		"id": "snappier-animations",
 		"name": "Snappier Animations",
 		"author": "Dmytro-Shulha",
-		"description": "A css snippet for snappier animations in Obsidian.",
+		"description": "This snippet makes the animations in Obsidian snappier.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "snappier-animations"
+	},
+	{
+		"id": "timeline-callout",
+		"name": "Timeline Callout",
+		"author": "harr",
+		"description": "With this snippet, you can create a timeline callout.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "timeline-callout"
+	},
+	{
+		"id": "vim-static-caret",
+		"name": "Vim Static Caret",
+		"author": "xnhp",
+		"description": "Changes the Vim caret from a blinking one to a static one in the editor to reflect a more realistic Vim experience.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "vim-static-caret"
 	}
 ]
