@@ -186,8 +186,12 @@ class CssSnippetStoreModal extends Modal {
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 
+		// Wrapper for search + status message
+		const topContainer = contentEl.createDiv();
+		topContainer.style.marginBottom = '1rem';
+
 		// Search bar
-		const searchInput = contentEl.createEl('input', {
+		const searchInput = topContainer.createEl('input', {
 			type: 'text',
 			placeholder: 'Search snippets...',
 		});
@@ -196,11 +200,20 @@ class CssSnippetStoreModal extends Modal {
 		searchInput.style.width = '100%';
 		searchInput.style.padding = '0.5rem';
 
+		// Message container
+		const messageEl = topContainer.createEl('div');
+		messageEl.style.marginTop = '0.5rem';
+		messageEl.style.textAlign = 'center';
+		messageEl.style.color = 'var(--text-muted)';
+		messageEl.style.fontStyle = 'italic';
+
 		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
 
 		// Render Function
 		const renderSnippets = (filter: string = "") => {
 			grid.empty();
+			messageEl.empty();
+
 			const lowerFilter = filter.toLowerCase();
 
 			const filteredSnippets = this.snippets.filter(snippet =>
@@ -211,17 +224,11 @@ class CssSnippetStoreModal extends Modal {
 			);
 
 			if (filteredSnippets.length === 0) {
-				const noResultsMessage = grid.createEl('div', {
-					text: this.snippets.length === 0
+				messageEl.setText(
+					this.snippets.length === 0
 						? "No Internet connection"
-						: "No snippets match your search.",
-					cls: 'no-snippets-message'
-				});
-				noResultsMessage.style.marginTop = '1rem';
-				noResultsMessage.style.textAlign = 'center';
-				noResultsMessage.style.color = 'var(--text-muted)';
-				noResultsMessage.style.fontStyle = 'italic';
-				noResultsMessage.style.width = '100%';
+						: "No snippets match your search."
+				);
 				return;
 			}
 
@@ -273,7 +280,6 @@ class CssSnippetStoreModal extends Modal {
 				});
 			});
 		};
-
 
 		// Initial rendering
 		renderSnippets();
