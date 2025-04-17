@@ -166,8 +166,13 @@ class CssSnippetStoreModal extends Modal {
 
 	onOpen() {
 		const { contentEl } = this;
+		contentEl.addClass('snippet-store-modal');
+
+		this.modalEl.style.width = '90vw';
+		this.modalEl.style.maxWidth = '1098px';
+
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
-		const grid = contentEl.createEl('div', { cls: 'snippet-store-grid'});
+		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
 
 		this.snippets.forEach(snippet => {
 			const card = grid.createDiv({ cls: 'community-item' });

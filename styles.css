@@ -1,0 +1,23 @@
+.mod-snippet-store .community-items-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--size-4-4);
+    margin-top: var(--size-4-4);
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.mod-snippet-store .community-item {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-m);
+    padding: var(--size-4-4);
+    background-color: var(--background-secondary);
+    box-shadow: var(--shadow-s);
+}
+
+.mod-snippet-store .snippet-store-button-wrapper {
+    margin-top: var(--size-4-2);
+    display: flex;
+    justify-content: flex-end;
+}
