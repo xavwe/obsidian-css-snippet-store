@@ -10,5 +10,3 @@
 - [x] Style Store
 - [x] Search
 
-## Known Bugs
-- [x] No Internet + open Settings > Appearance => Obsidian freezes
