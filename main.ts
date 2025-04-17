@@ -26,7 +26,8 @@ export default class CssSnippetStore extends Plugin {
 			if (await isOnline()) {
 				const response = await fetchWithTimeout(url);
 				if (!response.ok) {
-					throw new Error(`Network response was not ok: ${response.statusText}`);
+					new Notice(`Network response was not ok: ${response.statusText}`);
+					return;
 				}
 				/*
 				if (!response.headers.get('content-type')?.includes('application/json')) {
@@ -182,7 +183,10 @@ class CssSnippetStoreModal extends Modal {
 					try {
 						if (await isOnline()) {
 							const response = await fetchWithTimeout(url);
-							if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+							if (!response.ok) {
+								new Notice(`Network response was not ok: ${response.statusText}`);
+								return;
+							}
 							const code = await response.text();
 							await this.install(snippet.id, code);
 							this.updateSnippetCard(snippet);
