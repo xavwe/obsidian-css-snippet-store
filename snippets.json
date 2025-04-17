@@ -11,8 +11,32 @@
 		"id": "cornell-note",
 		"name": "Cornell Note",
 		"author": "nopshar",
-		"description": "Lorem ipsum est verbum.",
+		"description": "TODOTODOTODOTODOTODOTODOTODOTODO",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "hide-properties-reading-mode"
+	},
+	{
+		"id": "block-quote-inline",
+		"name": "Block Quote (Inline)",
+		"author": "Dmytro-Shulha",
+		"description": "TODOTODOTODOTODOTODOTODOTODOTODO",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "block-quote-inline"
+	},
+	{
+		"id": "image-zoom",
+		"name": "Image Zoom",
+		"author": "unknown",
+		"description": "This snippet allows you to zoom in on images in your notes.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "image-zoom"
+	},
+	{
+		"id": "snappier-animations",
+		"name": "Snappier Animations",
+		"author": "Dmytro-Shulha",
+		"description": "A css snippet for snappier animations in Obsidian.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "snappier-animations"
 	}
 ]
