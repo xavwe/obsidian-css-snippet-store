@@ -11,4 +11,4 @@
 - [x] Search
 
 ## Known Bugs
-- [ ] No Internet + open Settings > Appearance => Obsidian freezes
+- [x] No Internet + open Settings > Appearance => Obsidian freezes
