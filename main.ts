@@ -69,32 +69,10 @@ export default class CssSnippetStore extends Plugin {
 
 						customButton.textContent = 'Browse';
 						customButton.className = "mod-cta my-custom-button";
-
-						// Function to update the button text based on connectivity
-
-
-						// Initial check
-/*
-						updateButtonLabel(customButton);
-*/
-
-/*						// Update on connectivity change
-						window.addEventListener('online', () => updateButtonLabel(customButton));
-						window.addEventListener('offline', () => updateButtonLabel(customButton));*/
 					}
 				}
 			}
 		});
-
-/*		function updateButtonLabel(button: HTMLButtonElement) {
-			if (true) {
-				button.textContent = 'Browse';
-				button.className = "mod-cta my-custom-button";
-			} else {
-				button.textContent = 'No Internet';
-				button.className = "";
-			}
-		}*/
 
 		this.observer.observe(document.body, {
 			childList: true,
