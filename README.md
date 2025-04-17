@@ -5,11 +5,18 @@ As the name suggests, this is a store for CSS snippets for Obsidian. It allows y
 > This Plugin is currently under development!
 
 ## Roadmap
-
 - [x] Install Snippet
 - [x] Uninstall Snippet
 - [x] Style Store
 - [x] Search
+
+## Installation
+
+### Using BRAT plugin
+- use [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
+### Manual
+- download source code from [latest release](https://github.com/xavwe/obsidian-nerdfont-icon-picker/releases/latest)
+- unpack it into `path/to/vault/.obsidian/plugins`
 
 ## Submit your snippet
 To add your plugin to the list, make a pull request to the `snippets.json` file. Please add your snippet to the end of the list.
