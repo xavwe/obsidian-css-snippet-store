@@ -6,6 +6,7 @@ As the name suggests, this is a store for CSS snippets for Obsidian. It allows y
 - [x] Uninstall Snippet
 - [x] Style Store
 - [x] Search
+- [ ] Show Snippet README
 
 ## Installation
 
