@@ -176,6 +176,78 @@ class CssSnippetStoreModal extends Modal {
 		return await vault.adapter.exists(fullPath);
 	}
 
+	private renderSnippetsUI(filter: string = "") {
+		const { contentEl } = this;
+		const grid = contentEl.querySelector('.community-items-container') as HTMLDivElement;
+		const messageEl = contentEl.querySelector('.snippet-status-message') as HTMLDivElement;
+
+		if (!grid || !messageEl) return;
+
+		grid.empty();
+		messageEl.empty();
+
+		const lowerFilter = filter.toLowerCase();
+
+		const filteredSnippets = this.snippets.filter(snippet =>
+			!filter ||
+			snippet.name.toLowerCase().includes(lowerFilter) ||
+			snippet.author.toLowerCase().includes(lowerFilter) ||
+			snippet.description.toLowerCase().includes(lowerFilter)
+		);
+
+		if (filteredSnippets.length === 0) {
+			messageEl.setText(
+				this.snippets.length === 0
+					? "No Internet connection"
+					: "No snippets match your search."
+			);
+			return;
+		}
+
+		filteredSnippets.forEach(snippet => {
+			const card = grid.createDiv({ cls: 'community-item' });
+
+			card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
+			card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
+			card.createEl('div', { text: snippet.description, cls: 'community-desc' });
+
+			const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
+			const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
+
+			this.checkSnippetExists(snippet.id).then((exists) => {
+				if (exists) {
+					button.textContent = 'Delete';
+					button.className = 'mod-danger';
+					button.addEventListener('click', async () => {
+						await this.uninstall(snippet.id);
+						this.renderSnippetsUI(filter);
+					});
+				} else {
+					button.textContent = 'Install';
+					button.className = 'mod-cta';
+					button.addEventListener('click', async () => {
+						const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
+						try {
+							if (await isOnline()) {
+								const response = await fetchWithTimeout(url);
+								if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
+								const code = await response.text();
+								await this.install(snippet.id, code);
+								this.renderSnippetsUI(filter);
+							} else {
+								new Notice(`No Internet connection...`);
+							}
+						} catch (error) {
+							console.error(error);
+							new Notice(`Error: ${error.message}`);
+						}
+					});
+				}
+			});
+		});
+	}
+
+
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.addClass('snippet-store-modal');
@@ -186,11 +258,9 @@ class CssSnippetStoreModal extends Modal {
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 
-		// Wrapper for search + status message
 		const topContainer = contentEl.createDiv();
 		topContainer.style.marginBottom = '1rem';
 
-		// Search bar
 		const searchInput = topContainer.createEl('input', {
 			type: 'text',
 			placeholder: 'Search snippets...',
@@ -202,94 +272,25 @@ class CssSnippetStoreModal extends Modal {
 
 		// Message container
 		const messageEl = topContainer.createEl('div');
+		messageEl.classList.add('snippet-status-message');
 		messageEl.style.marginTop = '0.5rem';
 		messageEl.style.textAlign = 'center';
 		messageEl.style.color = 'var(--text-muted)';
 		messageEl.style.fontStyle = 'italic';
 
+		// Snippet container
 		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
 
-		// Render Function
-		const renderSnippets = (filter: string = "") => {
-			grid.empty();
-			messageEl.empty();
-
-			const lowerFilter = filter.toLowerCase();
-
-			const filteredSnippets = this.snippets.filter(snippet =>
-				!filter ||
-				snippet.name.toLowerCase().includes(lowerFilter) ||
-				snippet.author.toLowerCase().includes(lowerFilter) ||
-				snippet.description.toLowerCase().includes(lowerFilter)
-			);
-
-			if (filteredSnippets.length === 0) {
-				messageEl.setText(
-					this.snippets.length === 0
-						? "No Internet connection"
-						: "No snippets match your search."
-				);
-				return;
-			}
-
-			filteredSnippets.forEach(snippet => {
-				const card = grid.createDiv({ cls: 'community-item' });
-
-				card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
-				card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
-				card.createEl('div', { text: snippet.description, cls: 'community-desc' });
-
-				const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
-				const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
-
-				this.checkSnippetExists(snippet.id).then((exists) => {
-					if (exists) {
-						button.textContent = 'Delete';
-						button.className = 'mod-danger';
-
-						button.addEventListener('click', async () => {
-							await this.uninstall(snippet.id);
-							this.close();
-							this.open();
-						});
-					} else {
-						button.textContent = 'Install';
-						button.className = 'mod-cta';
-
-						button.addEventListener('click', async () => {
-							const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
-							try {
-								if (await isOnline()) {
-									const response = await fetchWithTimeout(url);
-									if (!response.ok) {
-										throw new Error(`Network response was not ok: ${response.statusText}`);
-									}
-									const code = await response.text();
-									await this.install(snippet.id, code);
-									this.close();
-									this.open();
-								} else {
-									new Notice(`No Internet connection...`);
-								}
-							} catch (error) {
-								console.error(error);
-								new Notice(`Error: ${error.message}`);
-							}
-						});
-					}
-				});
-			});
-		};
-
 		// Initial rendering
-		renderSnippets();
+		this.renderSnippetsUI();
 
-		// Attach event listener to search input
+		// Live search
 		searchInput.addEventListener('input', () => {
 			const value = searchInput.value.trim();
-			renderSnippets(value);
+			this.renderSnippetsUI(value);
 		});
 	}
+
 
 	onClose() {
 		const { contentEl } = this;
