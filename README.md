@@ -36,5 +36,5 @@ Your Repo has to be public and has to be in the following structure:
     ├── snippet.css
     └── README.md
 ```
-*Notice that every snippet consists of a `snippet.css` and `README.md` file. The `README.md` file is optional, but it is recommended to add it to provide more information about your snippet. The `snippet.css` file is the actual CSS code that will be applied to your Obsidian vault.*
+*Notice that every snippet consists of a `snippet.css` and `README.md` file. The `snippet.css` file is the actual CSS code that will be applied to your Obsidian vault.*
 
