@@ -29,8 +29,7 @@ Your Repo has to be public, otherwise the snippet will not be installed and has 
 │   ├── README.md
 └──folder2
     ├── snippet.css
-    ├── README.md
-
+    └── README.md
 ```
 *Notice that every snippet consists of a `snippet.css` and `README.md` file. The `README.md` file is optional, but it is recommended to add it to provide more information about your snippet. The `snippet.css` file is the actual CSS code that will be applied to your Obsidian vault.*
 
