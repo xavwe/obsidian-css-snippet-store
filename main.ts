@@ -18,14 +18,21 @@ export default class CssSnippetStore extends Plugin {
 
 	async onload() {
 		// Start the mutation observer when the plugin is loaded.
-		this.injectWhenSettingsLoaded();
+		this.injectBrowseButton();
 
 
 		// fetching list of snippets
-		const url = "https://raw.githubusercontent.com/xavwe/obsidian-css-snippet-store/refs/heads/main/snippets.json"
+		const url = "https://raw.githubusercontent.com/xavwe/obsidian-css-snippet-store/main/snippets.json"
 		try {
-			if (navigator.onLine) {
-				const response = await fetch(url);
+			if (await isOnline()) {
+				const response = await fetchWithTimeout(url);
+				if (!response.ok) {
+					throw new Error(`Network response was not ok: ${response.statusText}`);
+				}
+				/*
+				if (!response.headers.get('content-type')?.includes('application/json')) {
+					throw new Error("Unexpected content type");
+				}*/
 				this.snippets = await response.json();
 			} else {
 				new Notice(`No Internet connection...`);
@@ -37,7 +44,7 @@ export default class CssSnippetStore extends Plugin {
 		}
 	}
 
-	injectWhenSettingsLoaded() {
+	injectBrowseButton() {
 		this.observer = new MutationObserver(() => {
 			const settingItems = Array.from(document.querySelectorAll('.setting-item'));
 
@@ -61,29 +68,34 @@ export default class CssSnippetStore extends Plugin {
 
 						controlElement.appendChild(customButton);
 
+						customButton.textContent = 'Browse';
+						customButton.className = "mod-cta my-custom-button";
+
 						// Function to update the button text based on connectivity
 
 
 						// Initial check
+/*
 						updateButtonLabel(customButton);
+*/
 
-						// Update on connectivity change
+/*						// Update on connectivity change
 						window.addEventListener('online', () => updateButtonLabel(customButton));
-						window.addEventListener('offline', () => updateButtonLabel(customButton));
+						window.addEventListener('offline', () => updateButtonLabel(customButton));*/
 					}
 				}
 			}
 		});
 
-		function updateButtonLabel(button: HTMLButtonElement) {
-			if (navigator.onLine) {
+/*		function updateButtonLabel(button: HTMLButtonElement) {
+			if (true) {
 				button.textContent = 'Browse';
 				button.className = "mod-cta my-custom-button";
 			} else {
 				button.textContent = 'No Internet';
 				button.className = "";
 			}
-		}
+		}*/
 
 		this.observer.observe(document.body, {
 			childList: true,
@@ -173,7 +185,7 @@ class CssSnippetStoreModal extends Modal {
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 
-		// --- Search bar ---
+		// Search bar
 		const searchInput = contentEl.createEl('input', {
 			type: 'text',
 			placeholder: 'Search snippets...',
@@ -185,7 +197,7 @@ class CssSnippetStoreModal extends Modal {
 
 		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
 
-		// --- Render Function ---
+		// Render Function
 		const renderSnippets = (filter: string = "") => {
 			grid.empty();
 			const lowerFilter = filter.toLowerCase();
@@ -224,8 +236,15 @@ class CssSnippetStoreModal extends Modal {
 							button.addEventListener('click', async () => {
 								const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
 								try {
-									if (navigator.onLine) {
-										const response = await fetch(url);
+									if (await isOnline()) {
+										const response = await fetchWithTimeout(url);
+										if (!response.ok) {
+											throw new Error(`Network response was not ok: ${response.statusText}`);
+										}
+										/*
+										if (!response.headers.get('content-type')?.includes('text/css')) {
+											throw new Error("Expected CSS content");
+										}*/
 										const code = await response.text();
 										await this.install(snippet.id, code);
 										this.close();
@@ -256,5 +275,31 @@ class CssSnippetStoreModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+	}
+}
+
+function fetchWithTimeout(resource: RequestInfo, options: RequestInit = {}, timeout = 10000): Promise<Response> {
+	return Promise.race([
+		fetch(resource, options),
+		new Promise<Response>((_, reject) => setTimeout(() => reject(new Error("Request timed out")), timeout))
+	]);
+}
+
+
+export async function isOnline(timeout = 3000): Promise<boolean> {
+	try {
+		const controller = new AbortController();
+		const id = setTimeout(() => controller.abort(), timeout);
+
+		await fetch("https://ping.archlinux.org", {
+			method: "GET",
+			mode: "no-cors",
+			signal: controller.signal,
+			cache: "no-store"
+		});
+		clearTimeout(id);
+		return true;
+	} catch (e) {
+		return false;
 	}
 }
