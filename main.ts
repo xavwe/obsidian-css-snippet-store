@@ -182,6 +182,7 @@ class CssSnippetStoreModal extends Modal {
 
 		this.modalEl.style.width = '90vw';
 		this.modalEl.style.maxWidth = '1098px';
+		this.modalEl.style.height = '90vh';
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 
