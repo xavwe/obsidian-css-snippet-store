@@ -63,7 +63,7 @@ export default class CssSnippetStore extends Plugin {
 						customButton.style.marginLeft = "8px";
 
 						customButton.onclick = () => {
-							new CssSnippetStoreModal(this.app, this.snippets).open();
+							new CssSnippetStoreModal(this.app, this.snippets, this).open();
 						};
 
 						controlElement.appendChild(customButton);
@@ -92,7 +92,7 @@ export default class CssSnippetStore extends Plugin {
 }
 
 class CssSnippetStoreModal extends Modal {
-	constructor(app: App, private snippets: Snippet[]) {
+	constructor(app: App, private snippets: Snippet[], private plugin: Plugin) {
 		super(app);
 		this.modalEl.addClass('mod-snippet-store');
 	}
@@ -253,7 +253,8 @@ class CssSnippetStoreModal extends Modal {
 							return;
 						}
 						const readme = await response.text();
-						new SnippetReadmeModal(this.app, snippet, readme).open();
+						// Pass the plugin instance (this.plugin)
+						new SnippetReadmeModal(this.app, snippet, readme, this.plugin).open();
 					} else {
 						new Notice("No Internet connection...");
 					}
@@ -349,7 +350,8 @@ class SnippetReadmeModal extends Modal {
 	constructor(
 		app: App,
 		private snippet: Snippet,
-		private readmeContent: string
+		private readmeContent: string,
+		private plugin: Plugin // Add reference to the plugin instance
 	) {
 		super(app);
 	}
@@ -361,28 +363,20 @@ class SnippetReadmeModal extends Modal {
 		this.modalEl.style.width = "80vw";
 		this.modalEl.style.height = "80vh";
 
-		// Title
-		contentEl.createEl("h2", {
-			text: `${this.snippet.name} – README`,
-		});
-
 		// Rewrite relative image paths to absolute GitHub raw URLs
 		const adjustedContent = this.rewriteRelativeMediaPaths(this.readmeContent);
 
 		// Markdown container
 		const markdownContainer = contentEl.createDiv();
-		markdownContainer.style.overflowY = "auto";
-		markdownContainer.style.maxHeight = "65vh";
-		markdownContainer.style.padding = "1rem";
-		markdownContainer.style.backgroundColor = "var(--background-secondary)";
-		markdownContainer.style.borderRadius = "8px";
 
 		// Render Markdown using Obsidian's renderer
-		await MarkdownRenderer.renderMarkdown(
+		// Use the plugin instance instead of "this"
+		await MarkdownRenderer.render(
+			this.app,
 			adjustedContent,
 			markdownContainer,
 			"",
-			this
+			this.plugin // Pass the plugin instance which is a Component
 		);
 
 		markdownContainer.querySelectorAll("img").forEach((img) => {
@@ -401,7 +395,7 @@ class SnippetReadmeModal extends Modal {
 		const base = `https://raw.githubusercontent.com/${this.snippet.repo}/refs/heads/main/${this.snippet.folder}/`;
 
 		// Regex to match image/video markdown with relative path
-		return content.replace(/!\[([^\]]*)\]\((\.\/[^)]+)\)/g, (match, alt, relPath) => {
+		return content.replace(/!\[([^\]]*)]\((\.\/[^)]+)\)/g, (match, alt, relPath) => {
 			const url = base + relPath.replace("./", "");
 			return `![${alt}](${url})`;
 		});
