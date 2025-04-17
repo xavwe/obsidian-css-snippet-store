@@ -12,7 +12,7 @@ As the name suggests, this is a store for CSS snippets for Obsidian. It allows y
 ### Using BRAT plugin
 - use [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin
 ### Manual
-- download source code from [latest release](https://github.com/xavwe/obsidian-nerdfont-icon-picker/releases/latest)
+- download source code from [latest release](https://github.com/xavwe/obsidian-css-snippet-store/releases/latest)
 - unpack it into `path/to/vault/.obsidian/plugins`
 
 ## Submit your snippet
