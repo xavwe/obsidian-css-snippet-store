@@ -7,7 +7,6 @@ interface Snippet {
 	description: string;
 	repo: string;
 	folder: string;
-	source?: string;
 }
 
 export default class CssSnippetStore extends Plugin {
