@@ -172,58 +172,84 @@ class CssSnippetStoreModal extends Modal {
 		this.modalEl.style.maxWidth = '1098px';
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
+
+		// --- Search bar ---
+		const searchInput = contentEl.createEl('input', {
+			type: 'text',
+			placeholder: 'Search snippets...',
+		});
+		searchInput.classList.add('snippet-search-input');
+		searchInput.style.marginBottom = '1rem';
+		searchInput.style.width = '100%';
+		searchInput.style.padding = '0.5rem';
+
 		const grid = contentEl.createEl('div', { cls: 'community-items-container' });
 
-		this.snippets.forEach(snippet => {
-			const card = grid.createDiv({ cls: 'community-item' });
+		// --- Render Function ---
+		const renderSnippets = (filter: string = "") => {
+			grid.empty();
+			const lowerFilter = filter.toLowerCase();
 
-			card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
-			card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
-			card.createEl('div', { text: snippet.description, cls: 'community-desc' });
+			this.snippets
+				.filter(snippet =>
+					!filter ||
+					snippet.name.toLowerCase().includes(lowerFilter) ||
+					snippet.author.toLowerCase().includes(lowerFilter) ||
+					snippet.description.toLowerCase().includes(lowerFilter)
+				)
+				.forEach(snippet => {
+					const card = grid.createDiv({ cls: 'community-item' });
 
-			const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
+					card.createEl('div', { text: snippet.name, cls: 'community-item-name' });
+					card.createEl('div', { text: `By ${snippet.author}`, cls: 'community-item-author' });
+					card.createEl('div', { text: snippet.description, cls: 'community-desc' });
 
-			const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
+					const buttonWrapper = card.createEl('div', { cls: 'snippet-store-button-wrapper' });
+					const button = buttonWrapper.createEl('button', { cls: 'mod-cta' });
 
-			// Check if snippet already exists before updating the button text
-			this.checkSnippetExists(snippet.id).then((exists) => {
-				if (exists) {
-					button.textContent = 'Delete';
-					button.className = 'mod-danger';  // Optionally change the class to indicate danger
+					this.checkSnippetExists(snippet.id).then((exists) => {
+						if (exists) {
+							button.textContent = 'Delete';
+							button.className = 'mod-danger';
 
-					// Delete snippet logic
-					button.addEventListener('click', async () => {
-						await this.uninstall(snippet.id);
-						// Optionally, reload the modal to update the button text after deletion
-						this.close();
-						this.open();
-					});
-				} else {
-					button.textContent = 'Install';
-					button.className = 'mod-cta';
-
-					// Install snippet logic
-					button.addEventListener('click', async () => {
-						const url = "https://raw.githubusercontent.com/" + snippet.repo + "/refs/heads/main/" + snippet.folder + "/snippet.css"
-						try {
-							if (navigator.onLine) {
-								const response = await fetch(url);
-								const code = await response.text();
-								await this.install(snippet.id, code);
-								// Optionally, reload the modal to update the button text after installation
+							button.addEventListener('click', async () => {
+								await this.uninstall(snippet.id);
 								this.close();
 								this.open();
-							} else {
-								new Notice(`No Internet connection...`);
-								return;
-							}
-						} catch (error) {
-							console.error(error);
-							new Notice(`Error: ${error.message}`);
+							});
+						} else {
+							button.textContent = 'Install';
+							button.className = 'mod-cta';
+
+							button.addEventListener('click', async () => {
+								const url = `https://raw.githubusercontent.com/${snippet.repo}/refs/heads/main/${snippet.folder}/snippet.css`;
+								try {
+									if (navigator.onLine) {
+										const response = await fetch(url);
+										const code = await response.text();
+										await this.install(snippet.id, code);
+										this.close();
+										this.open();
+									} else {
+										new Notice(`No Internet connection...`);
+									}
+								} catch (error) {
+									console.error(error);
+									new Notice(`Error: ${error.message}`);
+								}
+							});
 						}
 					});
-				}
-			});
+				});
+		};
+
+		// Initial rendering
+		renderSnippets();
+
+		// Attach event listener to search input
+		searchInput.addEventListener('input', () => {
+			const value = searchInput.value.trim();
+			renderSnippets(value);
 		});
 	}
 
