@@ -122,14 +122,14 @@ class CssSnippetStoreModal extends Modal {
 
 			// Check if file already exists
 			if (await adapter.exists(fullPath)) {
-				new Notice(`Snippet "${fileName}" already exists.`);
+				new Notice(`Snippet with id "${fileName}" already exists.`);
 				return;
 			}
 
 			// Write default content to the CSS snippet
 			await vault.create(fullPath, code);
 
-			new Notice(`Snippet "${fileName}" created in .obsidian/snippets.`);
+			new Notice(`Snippet "${fileName}" installed`);
 		} catch (err) {
 			console.error('Failed to create snippet:', err);
 			new Notice('Failed to create snippet. See console for details.');
