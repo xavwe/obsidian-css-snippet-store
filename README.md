@@ -25,7 +25,7 @@ To add your plugin to the list, make a pull request to the `snippets.json` file.
 - `repo`: The GitHub repository identifier, in the form of user-name/repo-name, if your GitHub repo is located at https://github.com/user-name/repo-name.
 - `folder`: The folder name where your snippet is located. This is the folder name inside the repository, not the full path.
 
-Your Repo has to be public, otherwise the snippet will not be installed and has to be in the following structure:
+Your Repo has to be public and has to be in the following structure:
 
 ```
 ├── folder1
