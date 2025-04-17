@@ -1,4 +1,4 @@
-# Obsidian CSS Snippet Store
+# CSS Snippet Store
 As the name suggests, this is a store for CSS snippets for Obsidian. It allows you to easily install and uninstall snippets. It is works similar to the existing Theme and Plugin store.
 
 ## Roadmap
