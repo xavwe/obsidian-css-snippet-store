@@ -97,7 +97,7 @@ class CssSnippetStoreModal extends Modal {
 	async install(name: string, code: string) {
 		const vault = this.app.vault;
 		const adapter = vault.adapter;
-		const snippetFolderPath = '.obsidian/snippets';
+		const snippetFolderPath = this.app.vault.configDir + '/snippets';
 		const fileName = name + '.css';
 		const fullPath = `${snippetFolderPath}/${fileName}`;
 
@@ -125,7 +125,7 @@ class CssSnippetStoreModal extends Modal {
 
 	async uninstall(name: string) {
 		const vault = this.app.vault;
-		const snippetFolderPath = '.obsidian/snippets';
+		const snippetFolderPath = this.app.vault.configDir + '/snippets';
 		const fileName = name + '.css';
 		const fullPath = `${snippetFolderPath}/${fileName}`;
 
@@ -145,7 +145,7 @@ class CssSnippetStoreModal extends Modal {
 
 	async checkSnippetExists(name: string): Promise<boolean> {
 		const vault = this.app.vault;
-		const snippetFolderPath = '.obsidian/snippets';
+		const snippetFolderPath = this.app.vault.configDir + '/snippets';
 		const fileName = name + '.css';
 		const fullPath = `${snippetFolderPath}/${fileName}`;
 		return await vault.adapter.exists(fullPath);
