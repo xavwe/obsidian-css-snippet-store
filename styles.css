@@ -21,3 +21,28 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.snippet-search-input {
+    margin-bottom: 1rem;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.snippet-status-message {
+    margin-top: 0.5rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.snippet-readme-modal-element {
+    width: 80vw;
+    height: 80vh;
+}
+
+.snippet-readme-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+}

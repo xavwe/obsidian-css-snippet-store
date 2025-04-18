@@ -291,17 +291,10 @@ class CssSnippetStoreModal extends Modal {
 			placeholder: 'Search snippets...',
 		});
 		searchInput.classList.add('snippet-search-input');
-		searchInput.style.marginBottom = '1rem';
-		searchInput.style.width = '100%';
-		searchInput.style.padding = '0.5rem';
 
 		// Message container
 		const messageEl = topContainer.createEl('div');
 		messageEl.classList.add('snippet-status-message');
-		messageEl.style.marginTop = '0.5rem';
-		messageEl.style.textAlign = 'center';
-		messageEl.style.color = 'var(--text-muted)';
-		messageEl.style.fontStyle = 'italic';
 
 		// Snippet container
 		contentEl.createEl('div', { cls: 'community-items-container' });
@@ -365,8 +358,7 @@ class SnippetReadmeModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("snippet-readme-modal");
-		this.modalEl.style.width = "80vw";
-		this.modalEl.style.height = "80vh";
+		this.modalEl.addClass("snippet-readme-modal-element");
 
 		// Show loading indicator if no content yet
 		if (!this.readmeContent) {
@@ -405,10 +397,7 @@ class SnippetReadmeModal extends Modal {
 			// Optimize image loading
 			markdownContainer.querySelectorAll("img").forEach((img) => {
 				img.setAttribute("loading", "lazy");
-				img.style.maxWidth = "100%";
-				img.style.height = "auto";
-				img.style.display = "block";
-				img.style.margin = "1rem auto";
+				img.addClass("snippet-readme-image");
 			});
 		} catch (error) {
 			console.error("Error rendering README:", error);
