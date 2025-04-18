@@ -322,9 +322,9 @@ class CssSnippetStoreModal extends Modal {
 	}
 }
 
-function fetchWithTimeout(resource: RequestInfo, options: RequestInit = {}, timeout = 10000): Promise<Response> {
+function fetchWithTimeout(resource: RequestInfo, timeout = 10000): Promise<Response> {
 	return Promise.race([
-		fetch(resource, options),
+		this.app.request.requestUrl(resource),
 		new Promise<Response>((_, reject) => setTimeout(() => reject(new Error("Request timed out")), timeout))
 	]);
 }
@@ -334,11 +334,10 @@ export async function isOnline(timeout = 3000): Promise<boolean> {
 		const controller = new AbortController();
 		const id = setTimeout(() => controller.abort(), timeout);
 
-		await fetch("https://ping.archlinux.org", {
+		await this.app.request.requestUrl({
+			url: "https://ping.archlinux.org",
 			method: "GET",
-			mode: "no-cors",
-			signal: controller.signal,
-			cache: "no-store"
+			cache: "no-cache"
 		});
 		clearTimeout(id);
 		return true;
