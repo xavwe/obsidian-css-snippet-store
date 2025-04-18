@@ -59,7 +59,6 @@ export default class CssSnippetStore extends Plugin {
 					// Check if our button is already injected
 					if (controlElement && !controlElement.querySelector('.my-custom-button')) {
 						const customButton = document.createElement("button");
-						customButton.style.marginLeft = "8px";
 
 						customButton.onclick = () => {
 							new CssSnippetStoreModal(this.app, this.snippets, this).open();
@@ -68,7 +67,7 @@ export default class CssSnippetStore extends Plugin {
 						controlElement.appendChild(customButton);
 
 						customButton.textContent = 'Browse';
-						customButton.className = "mod-cta my-custom-button";
+						customButton.className = "mod-cta my-custom-button injected-button";
 					}
 				}
 			}

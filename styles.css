@@ -56,3 +56,7 @@
 .snippet-store-top-container {
     margin-bottom: 1rem;
 }
+
+.injected-button {
+    margin-left: 8px;
+}
