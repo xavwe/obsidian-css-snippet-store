@@ -46,3 +46,13 @@
     display: block;
     margin: 1rem auto;
 }
+
+.snippet-store-modal-element {
+    width: 90vw;
+    max-width: 1098px;
+    height: 90vh;
+}
+
+.snippet-store-top-container {
+    margin-bottom: 1rem;
+}

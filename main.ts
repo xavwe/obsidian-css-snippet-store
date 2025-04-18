@@ -276,15 +276,12 @@ class CssSnippetStoreModal extends Modal {
 	onOpen() {
 		const { contentEl } = this;
 		contentEl.addClass('snippet-store-modal');
-
-		this.modalEl.style.width = '90vw';
-		this.modalEl.style.maxWidth = '1098px';
-		this.modalEl.style.height = '90vh';
+		this.modalEl.addClass('snippet-store-modal-element');
 
 		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
 
 		const topContainer = contentEl.createDiv();
-		topContainer.style.marginBottom = '1rem';
+		topContainer.addClass('snippet-store-top-container');
 
 		const searchInput = topContainer.createEl('input', {
 			type: 'text',
