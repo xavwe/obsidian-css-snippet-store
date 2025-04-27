@@ -62,5 +62,13 @@
 		"description": "Changes the Vim caret from a blinking one to a static one in the editor to reflect a more realistic Vim experience.",
 		"repo": "xavwe/obsidian-css-snippets",
 		"folder": "vim-static-caret"
+	},
+	{
+		"id": "spoiler-callout",
+		"name": "Spoiler Callout",
+		"author": "gsarig",
+		"description": "Styles a spoiler custom callout, and reveals its contents after the box is both expanded and the user hovers over the content area.",
+		"repo": "xavwe/obsidian-css-snippets",
+		"folder": "spoiler-callout"
 	}
 ]
