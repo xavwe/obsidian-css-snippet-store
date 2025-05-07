@@ -277,7 +277,7 @@ class CssSnippetStoreModal extends Modal {
 		contentEl.addClass('snippet-store-modal');
 		this.modalEl.addClass('snippet-store-modal-element');
 
-		contentEl.createEl('h1', { text: 'CSS Snippet Store' });
+		contentEl.createEl('h1', { text: 'CSS snippet store' });
 
 		const topContainer = contentEl.createDiv();
 		topContainer.addClass('snippet-store-top-container');
